@@ -1,0 +1,17 @@
+# Create replay
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Basic cmlvdDp0TjJaVHRWVDVDVXBVZmFpT2lJWVdR' -d '{
+  "gameEnd": 1626,
+  "gameType": "MATCHED_GAME",
+  "gameVersion": "10.25.348.1797",
+  "queueId": 420
+}' 'https://127.0.0.1:64970/lol-replays/v2/metadata/3705698442/create' -k -v   
+
+# Download replay
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Basic cmlvdDp0TjJaVHRWVDVDVXBVZmFpT2lJWVdR' -d '{
+  "componentType": "string"
+}' 'https://127.0.0.1:64970/lol-replays/v1/rofls/3705698442/download' -k                                                                                                     
+
+# Watch replay
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' --header 'Authorization: Basic cmlvdDp0TjJaVHRWVDVDVXBVZmFpT2lJWVdR' -d '{
+  "componentType": "string"
+}' 'https://127.0.0.1:64970/lol-replays/v1/rofls/3705698442/watch' -k                                                                                                     

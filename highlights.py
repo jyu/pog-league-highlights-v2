@@ -9,9 +9,15 @@ watcher = LolWatcher(get_api_key())
 region = 'na1'
 
 # USER
-USERNAME = 'blaberfish2'
-LANE = 'JUNGLE'
-ROLE = 'NONE'
+# USERNAME = 'blaberfish2'
+# LANE = 'JUNGLE'
+# ROLE = 'NONE'
+# USERNAME = 'C9 Zven'
+# LANE = 'BOTTOM'
+# ROLE = 'DUO_CARRY'
+USERNAME = 'humanbenchmark'
+LANE = 'MID'
+ROLE = 'SOLO'
 RANKED_ID = 420
 
 # TIME, get month start/end in seconds
@@ -36,18 +42,17 @@ for match in matches['matches']:
   # Only want on role games
   if match['lane'] != LANE or match['role'] != ROLE:
     continue
-  
   # League timestamp is in ms
   # timestamp = match['timestamp'] / 1000
   # if timestamp < month_start or timestamp > month_end:
   #   print(timestamp)
   #   continue
-
   res.append(match)
 
-for match in res[:10]:
-  match_info = watcher.match.by_id(region, match['gameId'])
+print('For ranked on role games, found', len(res), 'games')
 
+for match in res[:20]:
+  match_info = watcher.match.by_id(region, match['gameId'])
   game_end = match_info["gameDuration"]
   game_type = match_info["gameType"]
   game_version = match_info["gameVersion"]
@@ -56,21 +61,24 @@ for match in res[:10]:
   # Get the participant ID fro match info
   participant_id = None
   for participant in match_info['participantIdentities']:
-    if participant['player']['accountId'] == user['accountId']:
+    if (participant['player']['accountId'] == user['accountId'] or 
+        participant['player']['summonerName'] == USERNAME):
       participant_id = participant['participantId']
-
   is_multikill = False
   highlight_times = []
+  kda = None
 
   # For match participant info
   for participant in match_info['participants']:
     if participant['participantId'] == participant_id:
-      triple = participant['stats']['tripleKills']
-      quadra = participant['stats']['quadraKills']
-      penta = participant['stats']['pentaKills']
+      stats =  participant['stats']
+      triple = stats['tripleKills']
+      quadra = stats['quadraKills']
+      penta = stats['pentaKills']
+      kda = f"{stats['kills']}/{stats['deaths']}/{stats['assists']}"
       if triple > 0 or quadra > 0 or penta > 0:
         is_multikill = True
-
+  
   is_highlight = is_multikill
   timeline = watcher.match.timeline_by_match(region, match['gameId'])
   # 1 frame per min
@@ -102,5 +110,9 @@ for match in res[:10]:
   if is_highlight and len(highlight_times) > 0:
     print("game_id", match['gameId'])
     print("champion", get_champions_name(match['champion']))
+    print("kda", kda)
     print(highlight_times)
+  print("champion", get_champions_name(match['champion']))
+  print("kda", kda)
+
   time.sleep(1)
